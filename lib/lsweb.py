@@ -113,7 +113,8 @@ def get_games(name='bpl', event_type='competition'):
 
 '''
 def parse_table(soup):
-    lt = soup.find('div', attrs={'data-testid': 'league_table-container'})
+    #lt = soup.find('div', attrs={'data-testid': 'league_table-container'})
+    lt = soup.find('div', {'class': 'Ld'})
     body = lt.find('tbody')
     
     header = ['LP', '', 'Team Name', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts']
@@ -121,7 +122,7 @@ def parse_table(soup):
     table.append(header)
     for l in body.find_all('tr'):
         temp = l.find_all(text=True)
-        if not l.find('span', attrs={'class': 'wj'}):
+        if not l.find('span', attrs={'class': 'tj'}):
             temp.insert(1, '')
         table.append(temp)
     

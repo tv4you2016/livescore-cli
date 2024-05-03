@@ -40,10 +40,11 @@ def get_lmaxd(ld: list) -> dict:
 
 
 def get_lmaxl(ld):
-    res = [0] * len(ld[0])
-    i = 0
+    res = []
     for e1 in ld:
         for i, e2 in enumerate(e1):
+            if i >= len(res):
+                res.extend([0] * (i - len(res) + 1))
             res[i] = max(res[i], len(e2))
     return res
 
