@@ -61,40 +61,49 @@ def get_match_id(url):
     }
 '''
 
+
+
 def parse_games(soup):
     
     #sp = soup.find('div', attrs={'data-testid': 'match_rows-root'}).find_all('div', recursive=False)
-    sp = soup.find('div', {'class': 'db'}).find_all('div', {'class': 'yf Cf'}, recursive=False)
+    matches_container = soup.find('div', {'class': 'db'})
+    #print(matches_container)
+    matches = matches_container.find_all('div', {'class': 'yf Cf'}, recursive=False)
     #sp = soup.find('div', {'class': 'yf Cf'})
-    print(sp)
+    #print(matches)
     games = defaultdict(list)
-    date = ''
-
-    for i in range(0, len(sp)):
-        line = sp[i]
+    date = matches_container.find('div', {'class': 'sb'}).find('span',  {'class': 'tb'}).text
+    
+    for i in range(0, len(matches)):
+        line = matches[i]
         match = {}
-        date_html = line.find('span', attrs={'data-testid': re.compile('category_header-date.*')})
-        if date_html:
-            date = date_html.text
-        else:
-            match_details_url = line.find('a', href=True).get('href')
-            match_id = get_match_id(match_details_url)
-            
-            if match_details_url and match_id:
-                mst = line.find('span', attrs={'data-testid': f'match_row_time-status_or_time_{match_id}'}).text
-                ht = line.find('span', attrs={'data-testid': f'football_match_row-home_team_{match_id}'}).text
-                hts = line.find('span', attrs={'data-testid': f'football_match_row-home_score_{match_id}'}).text
-                at = line.find('span', attrs={'data-testid': f'football_match_row-away_team_{match_id}'}).text
-                ats = line.find('span', attrs={'data-testid': f'football_match_row-away_score_{match_id}'}).text
+        #date_html = line.find('span', attrs={'data-testid': re.compile('category_header-date.*')})
+        #if date_html:
+        #    date = date_html.text
+        #else:
+        match_details_url = line.find('a', href=True).get('href')
+        match_id = get_match_id(match_details_url)
+        ir ao  match_details_url buscar os dados abaixo
+        if match_details_url and match_id:
+            #match_status
+            mst = line.find('span', {'class': 'ng'}).find('span',  {'class': 'sg og'}).text
+            #home_team
+            ht = line.find('span', {'class': 'ij'}).find('span', {'class': 'kj'}).text
+            #home_score
+            hts = line.find('span', {'class': 'fj'}).find('span', {'class': 'nj'}).text
+            #away_team
+            at = line.find('span', {'class': 'jj'}).find('span', {'class': 'kj'}).text
+            #away_score
+            ats = line.find('span', {'class': 'fj'}).find('span', {'class': 'oj'}).text
 
-                match = {
-                    'match_status': mst,
-                    'home_team': ht,
-                    'home_score': int(hts) if hts.isdigit() else hts,
-                    'away_team': at,
-                    'away_score': int(ats) if ats.isdigit() else ats,
-                    'match_details_url': base_url + match_details_url
-                }
+            match = {
+                'match_status': mst,
+                'home_team': ht,
+                'home_score': int(hts) if hts.isdigit() else hts,
+                'away_team': at,
+                'away_score': int(ats) if ats.isdigit() else ats,
+                'match_details_url': base_url + match_details_url
+            }
         games[date].append(match) if (date and match) else None
 
     return games
