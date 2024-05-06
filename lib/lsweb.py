@@ -62,11 +62,15 @@ def get_match_id(url):
 '''
 
 def parse_games(soup):
-    sp = soup.find('div', attrs={'data-testid': 'match_rows-root'}).find_all('div', recursive=False)
+    
+    #sp = soup.find('div', attrs={'data-testid': 'match_rows-root'}).find_all('div', recursive=False)
+    sp = soup.find('div', {'class': 'db'}).find_all('div', {'class': 'yf Cf'}, recursive=False)
+    #sp = soup.find('div', {'class': 'yf Cf'})
+    print(sp)
     games = defaultdict(list)
     date = ''
 
-    for i in range(1, len(sp)):
+    for i in range(0, len(sp)):
         line = sp[i]
         match = {}
         date_html = line.find('span', attrs={'data-testid': re.compile('category_header-date.*')})
