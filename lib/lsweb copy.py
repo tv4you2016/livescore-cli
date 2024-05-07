@@ -44,7 +44,7 @@ def get_match_id(url):
 
 def get_match_details(match_details_url):
     url = base_url + match_details_url
-    #print(url)
+    print(url)
     html = requests.get(url).text
     soup = BeautifulSoup(html, 'html.parser')
     return soup
@@ -91,50 +91,55 @@ def parse_games(soup):
         #else:
         match_details_url = line.find('a', href=True).get('href')
         match_details = get_match_details(match_details_url)
-             
+        #ir ao  match_details_url buscar os dados abaixo
 
         if match_details_url and match_details:
 
-            date = ""
+            all_spans=match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find_all('span')
             #match_status
-            mst = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'be'}).text
+            mst = all_spans[0].text
            
-            if (mst == 'FT' or mst == 'AP' ): 
+            if mst == 'FT': 
+                match_info = match_details.find('div', {'id': '__livescore'}).find_all('div',  {'class': 'ec'})
+                match_info= match_info[1].find_all('span')
                 
-                match_infos = match_details.find('div', {'id': '__livescore'}).find_all('div',  {'class': 'ec'})
-                if (len(match_infos) >= 2):
-                    match_info = match_infos[1].find_all('span')
-                    if (len(match_info) >= 2):
-                        date = match_info[1].text
-     
+                date = match_info[1].text
+                if (len(all_spans) == 7):
+                    #home_team
+                    ht = all_spans[1]..text
+                    #home_score
+                    hts = all_spans[3].text
+                    #away_team
+                    at = all_spans[6].text
+                    #away_score
+                    ats = all_spans[5].text
+
+            elif mst == 'AP':
+                match_info = match_details.find('div', {'id': '__livescore'}).find_all('div',  {'class': 'ec'})
+                match_info= match_info[1].find_all('span')
+                date = match_info[1].text
 
                 #home_team
-                ht = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'fe'}).text
+                ht = all_spans[1].text
+                #home_score
+                hts = all_spans[4].text
                 #away_team
-                at = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'ge'}).text
-
-                matct_result= match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('div',  {'class': 'he'}).find_all('span')
-                if (len(matct_result) == 3):
-                    #home_score
-                    hts = matct_result[0].text
-                    #away_score
-                    ats = matct_result[2].text
+                at = all_spans[7].text
+                #away_score
+                ats = all_spans[6].text
             elif  mst == 'AET':
                 break
-            else : # hours 
-
-                match_info = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ec'}).find_all('span')
-
-                if (len(match_info) == 2):
-                    date = match_info[1].text
+            else :
+                match_info = match_details.find('div', {'id': '__livescore'}).find_all('div',  {'class': 'ec'})
+                match_info= match_info[0].find_all('span')
+                date = match_info[1].text
 
                 #home_team
-                ht = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'fe'}).text
-                
+                ht = all_spans[1].text
                 #home_score
                 hts = ''
                 #away_team
-                at = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'ge'}).text
+                at = all_spans[3].text
                 #away_score
                 ats = ''
 
