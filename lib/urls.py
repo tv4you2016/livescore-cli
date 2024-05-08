@@ -46,6 +46,12 @@ details = {
             "country": "",
             "description": "",
             "url": f'{base_url}/football/europa-league'
+        },
+        "primeira-liga": {
+            "title": "primeira-liga",
+            "country": "",
+            "description": "",
+            "url": f'{base_url}/football/portugal/primeira-liga'
         }
     }
 }

@@ -6,6 +6,7 @@ from . import lscolors as c
 import os, sys
 
 
+
 def send_notification(text, title=''):
     icon = '~/.livescore-cli/assets/logo.png'
     if sys.platform.startswith('linux'):
@@ -19,7 +20,8 @@ def send_notification(text, title=''):
 
 
 def clear_screen():
-    os.system('clear') # if unix
+    if sys.platform.startswith('linux'):
+        os.system('clear') # if unix
 
 
 def print_pattern(c2p, n, color):
@@ -75,25 +77,6 @@ def get_match_line(match, lmaxd, c):
     return line
 
 
-def send_alert(prev, curr):
-    if prev:
-        pms = prev.get('match_status')
-        phts, pats = prev.get('home_score'), prev.get('away_score')
-        cms = curr.get("match_status") 
-        cht, chts = curr.get("home_team"), curr.get("home_score")
-        cat, cats = curr.get("away_team"), curr.get("away_score")
-
-        mtext = f'{cms}  {cht} {chts} - {cats} {cat}'
-
-        if (phts != chts or pats != cats):
-            send_notification(mtext, "GOAL!")
-        
-        if (pms != "1'" and cms == "1'"):
-            send_notification(mtext, "Match Started!")
-        
-        if (pms != "FT" and cms == "FT"):
-            send_notification(mtext, "Match Ended!")
-
 
 def display_games(games, title='No Title', prev_data=None):
     title = f'{title} SCORES'
@@ -111,7 +94,6 @@ def display_games(games, title='No Title', prev_data=None):
         
         for j, match in enumerate(match_day):
             prev_match = prev_matchday[j] if prev_matchday else None
-            send_alert(prev_match, match)
             match['date'] = day
             c.STATUS = c.STATS[i%len(c.STATS)]
             line = get_match_line(match, lmax_dict, c)
@@ -176,9 +158,9 @@ def display_table(table, title='No Title'):
             tlen = 0
         text += temp
         tlen += len(temp)
-    print(text)
+    #print(text)
 
-    print_pattern('-', lmax, c.RESET)
+    #print_pattern('-', lmax, c.RESET)
 
     tlen = 0
     text = ''
@@ -189,5 +171,5 @@ def display_table(table, title='No Title'):
             tlen = 0
         text += f'{temp}\t'
         tlen += len(temp)
-    print(text)
-    print_pattern('+', lmax, c.BLUE)
+    #print(text)
+    #print_pattern('+', lmax, c.BLUE)

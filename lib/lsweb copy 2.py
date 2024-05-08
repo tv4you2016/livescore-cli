@@ -106,22 +106,55 @@ def parse_games(soup):
                         date = match_info[1].text
      
 
-                #home_team
-                ht = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'fe'}).text
-                #away_team
-                at = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'ge'}).text
 
-                matct_result= match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('div',  {'class': 'he'}).find_all('span')
-                if (len(matct_result) == 3):
-                    #home_score
-                    hts = matct_result[0].text
-                    #away_score
-                    ats = matct_result[2].text
+
+                # penalty shoot-out:
+                match_result = match_details.find('div', {'id': '__livescore'}).find_all('div',  {'class': 'ae'})
+                if (len(match_result) > 0):
+                    # check aggregate score:
+                    if (len(match_result) == 2): # AGG
+                        match_score = match_result[1].find('div',{'class': 'he'}).find_all('span')
+                        if (len(match_score) == 3):
+                            #home_score
+                            hts = match_score[0].text
+                            #away_score
+                            ats = match_score[2].text
+                        
+                        aggScoreImage = ''
+                        aggScoreImage = match_result[0].find('span',{'class': 'aggScoreImage'})
+                        if aggScoreImage: 
+                           ht = match_result[0].find('span',  {'class': 'fe'}).text  + " (AGG)"
+                           at = match_result[0].find('span',  {'class': 'ge'}).text
+                        else:
+                           ht = match_result[0].find('span',  {'class': 'fe'}).text         
+                           at = match_result[0].find('span',  {'class': 'ge'}).text + " (AGG)"
+                        
+
+                    elif (len(match_result) == 3): # AGG + PEN
+                        match_score = match_result[2].find_all('div',{'class': 'he'}) 
+                        if (len(match_score) == 3):
+                            #home_score
+                            hts = match_score[0].text
+                            #away_score
+                            ats = match_score[2].text
+                else:
+                    #home_team
+                    ht = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'fe'}).text
+                    #away_team
+                    at = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('span',  {'class': 'ge'}).text
+
+                    # not penalty or aggregate               
+                    match_result= match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ae de'}).find('div',  {'class': 'he'}).find_all('span')
+                    if (len(match_result) == 3):
+                        #home_score
+                        hts = match_result[0].text
+                        #away_score
+                        ats = match_result[2].text
+
             elif  mst == 'AET':
                 break
             else : # hours 
-                date = mst
-                
+
                 match_info = match_details.find('div', {'id': '__livescore'}).find('div',  {'class': 'ec'}).find_all('span')
 
                 if (len(match_info) == 2):
